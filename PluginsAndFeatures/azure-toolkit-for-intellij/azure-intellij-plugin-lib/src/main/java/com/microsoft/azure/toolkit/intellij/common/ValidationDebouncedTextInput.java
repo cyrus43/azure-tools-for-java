@@ -15,9 +15,9 @@ public class ValidationDebouncedTextInput extends AzureTextInput {
     protected static final int DEBOUNCE_DELAY = 500;
     protected AzureValidationInfo validationInfo;
     private final Debouncer validator;
-    private final Extension spinner = Extension.create(new AnimatedIcon.Default(), "validating", null);
-    private final Extension invalid = Extension.create(AllIcons.General.BalloonError, "invalid", null);
-    private final Extension valid = Extension.create(AllIcons.General.InspectionsOK, "valid", null);
+    private final Extension spinner = Extension.create(new AnimatedIcon.Default(), "Validating", null);
+    private final Extension invalid = Extension.create(AllIcons.General.BalloonError, "Invalid", null);
+    private final Extension valid = Extension.create(AllIcons.General.InspectionsOK, "Valid", null);
 
     public ValidationDebouncedTextInput() {
         super();

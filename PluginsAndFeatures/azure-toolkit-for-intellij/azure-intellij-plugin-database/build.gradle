@@ -1,0 +1,10 @@
+intellij {
+}
+
+dependencies {
+    compile project(':azure-intellij-plugin-lib')
+    compile 'com.microsoft.azure:azure-toolkit-mysql-lib:0.12.0-SNAPSHOT'
+    compile 'com.microsoft.azure:azure-toolkit-sqlserver-lib:0.12.0-SNAPSHOT'
+    compile 'com.microsoft.azure:azure-toolkit-ide-common-lib:0.12.0-SNAPSHOT'
+    compile 'com.microsoft.azure:azure-toolkit-ide-database-lib:0.12.0-SNAPSHOT'
+}

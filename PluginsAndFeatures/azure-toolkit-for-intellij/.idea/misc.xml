@@ -3,6 +3,13 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/../../Utils/azure-toolkit-ide-libs/azure-toolkit-ide-database-lib/pom.xml" />
+      </list>
+    </option>
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="javax.annotation.Nullable" />
     <option name="myDefaultNotNull" value="javax.annotation.Nonnull" />

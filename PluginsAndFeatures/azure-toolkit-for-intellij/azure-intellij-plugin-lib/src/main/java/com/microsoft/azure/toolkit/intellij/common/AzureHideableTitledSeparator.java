@@ -18,9 +18,10 @@ import java.util.List;
 public class AzureHideableTitledSeparator extends TitledSeparator {
 
     private boolean isExpanded = true;
-    private List<JComponent> contentComponentList = new ArrayList<>();
+    private final List<JComponent> contentComponentList = new ArrayList<>();
 
     public AzureHideableTitledSeparator() {
+        super();
         this.updateIcon(isExpanded);
         this.addMouseListener(new MouseAdapter() {
             public void mouseReleased(@NotNull MouseEvent e) {
@@ -42,17 +43,17 @@ public class AzureHideableTitledSeparator extends TitledSeparator {
         component.setVisible(isExpanded);
     }
 
-    private final void update(boolean expand) {
+    private void update(boolean expand) {
         this.isExpanded = expand;
-        for (JComponent component : contentComponentList) {
+        for (final JComponent component : contentComponentList) {
             component.setVisible(expand);
         }
         this.updateIcon(expand);
     }
 
-    private final void updateIcon(boolean expand) {
-        Icon icon = expand ? AllIcons.General.ArrowDown : AllIcons.General.ArrowRight;
-        JLabel label = this.getLabel();
+    private void updateIcon(boolean expand) {
+        final Icon icon = expand ? AllIcons.General.ArrowDown : AllIcons.General.ArrowRight;
+        final JLabel label = this.getLabel();
         label.setIcon(icon);
     }
 
