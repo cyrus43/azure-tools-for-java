@@ -505,22 +505,26 @@ public class WebAppDeployDialog extends AppServiceBaseDialog {
         }
 
         btnDelete.setEnabled(true);
-        String appServiceName = table.getItems()[selectedRow].getText(0);
+        browserAppServiceDetails.setText("Fetching app service information");
 
-        IWebApp webApp = webAppDetailsMap.get(appServiceName);
-        IAppServicePlan asp = webApp.plan();
-        Subscription subscription = Azure.az(AzureAccount.class).account().getSubscription(webApp.subscriptionId());
+        final String appServiceName = table.getItems()[selectedRow].getText(0);
+        final IWebApp webApp = webAppDetailsMap.get(appServiceName);
+        Mono.fromCallable(() -> {
+            IAppServicePlan asp = webApp.plan();
+            Subscription subscription = Azure.az(AzureAccount.class).account().getSubscription(webApp.subscriptionId());
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("App Service name: %s \n", appServiceName));
-        sb.append(String.format("Subscription name: %s ; id: %s \n", subscription.getName(), subscription.getId()));
-        String aspName = asp == null ? "N/A" : asp.name();
-        String aspPricingTier = asp == null ? "N/A" : asp.entity().getPricingTier().toString();
-        sb.append(String.format("App Service Plan name: %s ; Pricing tier: %s \n", aspName, aspPricingTier));
-        String link = buildSiteLink(webApp, null);
-        sb.append(String.format("Link: <a href=\"%s\">%s</a> \n", link, link));
-        sb.append(String.format("<a href=\"%s\">%s</a> \n", ftpLinkString, "Show FTP deployment credentials"));
-        browserAppServiceDetails.setText(sb.toString());
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("App Service name: %s \n", webApp.name()));
+            sb.append(String.format("Subscription name: %s ; id: %s \n", subscription.getName(), subscription.getId()));
+            String aspName = asp == null ? "N/A" : asp.name();
+            String aspPricingTier = asp == null ? "N/A" : asp.entity().getPricingTier().toString();
+            sb.append(String.format("App Service Plan name: %s ; Pricing tier: %s \n", aspName, aspPricingTier));
+            String link = buildSiteLink(webApp, null);
+            sb.append(String.format("Link: <a href=\"%s\">%s</a> \n", link, link));
+            sb.append(String.format("<a href=\"%s\">%s</a> \n", ftpLinkString, "Show FTP deployment credentials"));
+            return sb.toString();
+        }).subscribeOn(Schedulers.boundedElastic()).subscribe(
+                content -> DefaultLoader.getIdeHelper().invokeLater(() -> browserAppServiceDetails.setText(content)));
     }
 
     private static String buildSiteLink(IWebAppBase<? extends AppServiceBaseEntity> webApp, String artifactName) {
@@ -539,7 +543,7 @@ public class WebAppDeployDialog extends AppServiceBaseDialog {
             TableItem refreshingItem = new TableItem(table, SWT.NULL);
             refreshingItem.setText(REFRESHING);
             Mono.fromCallable(() -> {
-                return Azure.az(AzureAppService.class).webapps(forceRefresh).stream()
+                return Azure.az(AzureAppService.class).webapps(forceRefresh).stream().parallel()
                         .filter(webApp -> !webApp.getRuntime().isDocker()
                                 && !Objects.equals(webApp.getRuntime().getJavaVersion(), JavaVersion.OFF))
                         .sorted((o1, o2) -> o1.name().compareTo(o2.name())).collect(Collectors.toList());

@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.ILog;
@@ -180,7 +179,6 @@ public class AppServiceCreateDialog extends AppServiceBaseDialog {
     private static final String CREATE_APP_SERVICE_PROGRESS_TITLE = "Create App Service Progress";
     private static final String ERROR_DIALOG_TITLE = "Create App Service Error";
     private static final String UPDATING_AZURE_LOCAL_CACHE = "Updating Azure local cache...";
-    private static final String GETTING_APP_SERVICES = "Getting App Services...";
     private static final String DIALOG_TITLE = "Create App Service";
     private static final String DIALOG_MESSAGE = "Create Azure App Service";
 
@@ -928,6 +926,7 @@ public class AppServiceCreateDialog extends AppServiceBaseDialog {
         }).subscribeOn(Schedulers.boundedElastic()).subscribe(groupList -> {
             binderResourceGroup = new ArrayList<>();
             DefaultLoader.getIdeHelper().invokeLater(() -> {
+                setComboRefreshingStatus(comboResourceGroup, false);
                 comboResourceGroup.removeAll();
                 for (ResourceGroup rg : groupList) {
                     comboResourceGroup.add(rg.getName());
@@ -994,12 +993,12 @@ public class AppServiceCreateDialog extends AppServiceBaseDialog {
         }
 
         setComboRefreshingStatus(comboAppServicePlanLocation, true);
-
         Mono.fromCallable(() -> Azure.az(AzureAccount.class).listRegions(selectedSubscription.getId()))
                 .subscribeOn(Schedulers.boundedElastic()).subscribe(locl -> {
                     if (locl != null) {
                         binderAppServicePlanLocation = new ArrayList<>();
                         DefaultLoader.getIdeHelper().invokeLater(() -> {
+                            setComboRefreshingStatus(comboAppServicePlanLocation, false);
                             for (int i = 0; i < locl.size(); i++) {
                                 Region loc = locl.get(i);
                                 comboAppServicePlanLocation.add(loc.getLabel());
